@@ -74,14 +74,18 @@ var askQuestion = function () {
         connection.query(queryStr, { item_id: id }, function (err, data) {
             if (err) throw err;
             console.log('data = ' + JSON.stringify(data));
+            gotUserInput(data, id, quantity)
         })
     })
 }
-if (data.length === 0) {
-    console.log('ERROR: Invalid Item ID. Please select a valid Item ID.');
-    allProducts();
 
-} else {
+function gotUserInput(data, id, quantity) {
+
+    if (data.length === 0) {
+        console.log('ERROR: Invalid Item ID. Please select a valid Item ID.');
+        allProducts();
+        return;
+    }
     var productData = data[0];
 
     if (quantity <= productData.stock_quantity) {
@@ -94,7 +98,7 @@ if (data.length === 0) {
         connection.query(updateQueryStr, function (err, data) {
             if (err) throw err;
 
-            console.log('Your oder has been placed! Your total is $' + productData.price * quantity);
+            console.log('Your order has been placed! Your total is $' + productData.price * quantity);
             console.log('Thank you for shopping with us!');
             console.log("\n---------------------------------------------------------------------\n");
 
@@ -103,7 +107,8 @@ if (data.length === 0) {
         })
     } else {
         console.log("That's too many fool!");
-        
+
         allProducts();
     }
-};
+
+}
