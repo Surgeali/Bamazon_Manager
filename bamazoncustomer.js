@@ -1,24 +1,15 @@
+require('dotenv').config();
 var inquirer = require("inquirer");
 var mysql = require("mysql");
-
-function Product(item_id, product_name, price) {
-    this.id = item_id;
-    this.name = product_name;
-    this.price = price;
-}
+var keys = require("./keys.js");
 
 var connection = mysql.createConnection({
     host: "localhost",
     port: 3306,
     user: "root",
-    password: "Rozina143",
+    password: keys.permissions.database,
     database: "bamazon_db"
 });
-// Product.prototype.printInfo = function() {
-//     console.log("ID: " + this.id + "\nName: " + this.name + "\nPrice: " + this.price);
-//     console.log("---------------");
-// }
-// -------------- validation ---------- //
 
 function validateInput(value) {
     var integer = Number.isInteger(parseFloat(value));
@@ -53,7 +44,9 @@ var askQuestion = function () {
         {
             type: 'input',
             name: "item_id",
-            message: "What is the product ID?"
+            message: "What is the product ID?",
+            validate: validateInput,
+            filter: Number
         },
         {
             type: 'input',
@@ -63,8 +56,6 @@ var askQuestion = function () {
             filter: Number
         }
     ]).then(function (answers) {
-        console.log("ID: " + this.id + "\nName: " + this.name + "\nPrice: " + this.price);
-        console.log("---------------");
 
         var id = answers.item_id;
         var quantity = answers.quantity;
@@ -73,7 +64,9 @@ var askQuestion = function () {
 
         connection.query(queryStr, { item_id: id }, function (err, data) {
             if (err) throw err;
-            console.log('data = ' + JSON.stringify(data));
+            // console.log('data = ' + JSON.stringify(data));
+            console.log("ID: " + data[0].item_id + "\nName: " + data[0].product_name + "\nPrice: " + data[0].price);
+            console.log("---------------");
             gotUserInput(data, id, quantity)
         })
     })
