@@ -1,0 +1,1 @@
+This app required inquirer for questions to the customers about products. Bamazon also uses MySQL to store the data to keep track of inventory and quantity. To run code use 'npm start'. 
